@@ -263,6 +263,12 @@ func (p *ProviderData) buildSessionFromClaims(rawIDToken, accessToken string) (*
 		}
 	}
 
+    // HACK: use preferred username as email if no email is available
+    if ss.Email == "" {
+        logger.Printf("use prefferred_username for email as it is not available")
+        extractor.GetClaimInto("preferred_username", &ss.Email);
+    }
+
 	// `email_verified` must be present and explicitly set to `false` to be
 	// considered unverified.
 	verifyEmail := (p.EmailClaim == options.OIDCEmailClaim) && !p.AllowUnverifiedEmail
